@@ -2,6 +2,8 @@
 import tkinter as tk
 import os
 import subprocess
+import sys
+import argparse
 from PIL import Image, ImageTk
 
 # --- Dependency Check ---
@@ -16,6 +18,99 @@ def check_dependencies():
         print(f"Error: Missing required dependencies: {', '.join(missing)}.")
         print(f"Please install them (e.g., 'sudo apt-get install {', '.join(missing)}') and try again.")
         exit(1)
+
+def setup_keyboard_shortcut():
+    """Set up keyboard shortcut for the snipping tool."""
+    print("Setting up keyboard shortcut (Ctrl+Shift+S)...")
+    
+    if not subprocess.run(["which", "gsettings"], capture_output=True).returncode == 0:
+        print("gsettings not found. Please set up the shortcut manually in your system settings.")
+        print("  - Shortcut: Ctrl+Shift+S")
+        print("  - Command: snip-tool")
+        return False
+    
+    # Determine desktop environment
+    de = "unknown"
+    if os.environ.get("XDG_CURRENT_DESKTOP"):
+        de = os.environ["XDG_CURRENT_DESKTOP"].lower()
+    elif os.environ.get("DESKTOP_SESSION"):
+        de = os.environ["DESKTOP_SESSION"].lower()
+    
+    print(f"Detected desktop environment: {de}")
+    
+    if any(env in de for env in ["gnome", "cinnamon", "ubuntu"]):
+        try:
+            # Get current custom keybindings
+            result = subprocess.run(
+                ["gsettings", "get", "org.gnome.settings-daemon.plugins.media-keys", "custom-keybindings"],
+                capture_output=True, text=True, check=True
+            )
+            custom_keybindings = result.stdout.strip()
+            
+            # Find an available custom keybinding slot
+            new_binding_path = None
+            for i in range(10):  # Check custom0 to custom9
+                binding_path = f"/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom{i}/"
+                if binding_path not in custom_keybindings:
+                    new_binding_path = binding_path
+                    break
+            
+            if new_binding_path:
+                # Set up the custom keybinding
+                subprocess.run([
+                    "gsettings", "set", 
+                    f"org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:{new_binding_path}",
+                    "name", "Snip Tool"
+                ], check=True)
+                
+                subprocess.run([
+                    "gsettings", "set",
+                    f"org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:{new_binding_path}",
+                    "command", "snip-tool"
+                ], check=True)
+                
+                subprocess.run([
+                    "gsettings", "set",
+                    f"org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:{new_binding_path}",
+                    "binding", "<Primary><Shift>s"
+                ], check=True)
+                
+                # Add the new binding path to the list
+                if custom_keybindings == "@as []":
+                    new_keybindings = f"['{new_binding_path}']"
+                else:
+                    # Parse and append
+                    existing_paths = custom_keybindings.strip("[]").replace("'", "")
+                    if existing_paths:
+                        paths = [f"'{path.strip()}'" for path in existing_paths.split(",") if path.strip()]
+                        paths.append(f"'{new_binding_path}'")
+                        new_keybindings = f"[{', '.join(paths)}]"
+                    else:
+                        new_keybindings = f"['{new_binding_path}']"
+                
+                subprocess.run([
+                    "gsettings", "set", "org.gnome.settings-daemon.plugins.media-keys",
+                    "custom-keybindings", new_keybindings
+                ], check=True)
+                
+                print("Keyboard shortcut (Ctrl+Shift+S) has been set up successfully!")
+                print("If the shortcut doesn't work immediately, try logging out and back in.")
+                return True
+            else:
+                print("Could not find an available custom keybinding slot.")
+                print("Please set the keyboard shortcut manually in your system settings.")
+                return False
+                
+        except subprocess.CalledProcessError as e:
+            print(f"Error setting up shortcut: {e}")
+            print("Please set the keyboard shortcut manually in your system settings.")
+            return False
+    else:
+        print(f"Desktop environment '{de}' is not fully supported for automatic shortcut setup.")
+        print("Please set the keyboard shortcut manually in your system settings:")
+        print("  - Shortcut: Ctrl+Shift+S")
+        print("  - Command: snip-tool")
+        return False
 
 try:
     from PIL import Image, ImageTk
@@ -181,8 +276,24 @@ class SnippingTool:
         self.root.destroy()
 
 
-if __name__ == "__main__":
+def main():
+    """Main function with command line argument parsing."""
+    parser = argparse.ArgumentParser(description='Snip Tool - A simple screenshot utility')
+    parser.add_argument('--setup-shortcut', action='store_true', 
+                       help='Set up keyboard shortcut (Ctrl+Shift+S)')
+    parser.add_argument('--version', action='version', version='Snip Tool 1.0.0')
+    
+    args = parser.parse_args()
+    
+    if args.setup_shortcut:
+        setup_keyboard_shortcut()
+        return
+    
+    # Normal snipping tool operation
     check_dependencies()
     main_root = tk.Tk()
     app = SnippingTool(main_root)
     main_root.mainloop()
+
+if __name__ == "__main__":
+    main()

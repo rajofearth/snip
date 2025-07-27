@@ -1,59 +1,177 @@
 # Snip Tool
 
-A simple snipping tool for Linux Mint (and other Debian-based distributions) that allows you to take screenshots of a selected area and copies them to your clipboard.
+A simple and intuitive snipping tool for Linux that allows you to take screenshots of selected areas and automatically copies them to your clipboard. Features a clean interface with visual feedback and custom branding.
 
-## Dependencies
+![Snip Tool Logo](snip-tool.png)
 
-This tool requires the following packages to be installed:
+## Features
 
-*   `scrot`
-*   `xclip`
-*   `python3-tk`
-*   `python3-pil`
-*   `python3-pil.imagetk`
-
-The installation script will attempt to install these for you if they are missing.
+- 🖱️ **Click and drag** to select screenshot area
+- 📋 **Automatic clipboard** integration
+- 🎨 **Visual feedback** with darkened overlay and bright selection
+- ⌨️ **Keyboard shortcut** support (Ctrl+Shift+S)
+- 🎯 **Clean, minimal** interface
+- 🖼️ **Custom branding** with integrated logo
+- 📦 **Professional packaging** as .deb file
 
 ## Installation
 
-1.  Make the installation script executable:
+### Method 1: .deb Package (Recommended)
 
-    ```bash
-    chmod +x install.sh
-    ```
+1. **Download or build the package:**
+   ```bash
+   # If you have the source code, build the package:
+   ./build-deb.sh
+   ```
 
-2.  Run the installation script with `sudo`:
+2. **Install the .deb package:**
+   ```bash
+   sudo dpkg -i snip-tool_1.0.0_all.deb
+   ```
 
-    ```bash
-    sudo ./install.sh
-    ```
+3. **Fix any dependency issues (if needed):**
+   ```bash
+   sudo apt-get install -f
+   ```
 
-The script will:
+4. **Set up keyboard shortcut:**
+   ```bash
+   snip-tool --setup-shortcut
+   ```
 
-*   Install the necessary dependencies.
-*   Copy the application to `/usr/local/bin/snip-tool`.
-*   Create an application menu entry.
-*   Set up a keyboard shortcut: `Ctrl+Shift+S`.
+### Method 2: Installation Script (Legacy)
 
-## How to Use
+1. Make the installation script executable:
+   ```bash
+   chmod +x install.sh
+   ```
 
-*   **From the application menu:** Launch "Snip Tool".
-*   **With the keyboard shortcut:** Press `Ctrl+Shift+S`.
+2. Run the installation script with `sudo`:
+   ```bash
+   sudo ./install.sh
+   ```
 
-Your screen will freeze, allowing you to click and drag to select an area. Once you release the mouse button, the selected area will be copied to your clipboard.
+## Dependencies
+
+The following packages are automatically installed with the .deb package:
+
+- `python3` - Python runtime
+- `python3-tk` - Tkinter GUI library
+- `python3-pil` - Python Imaging Library (Pillow)
+- `python3-pil.imagetk` - PIL ImageTk module
+- `scrot` - Screenshot utility
+- `xclip` - Clipboard utility
+
+## Usage
+
+### Launch Methods
+
+- **Application Menu:** Search for "Snip Tool" in your application launcher
+- **Terminal:** Run `snip-tool`
+- **Keyboard Shortcut:** Press `Ctrl+Shift+S` (after setup)
+
+### How It Works
+
+1. Launch the tool using any of the methods above
+2. Your screen will be overlaid with a darkened interface
+3. Click and drag to select the area you want to capture
+4. The selected area will appear bright while the rest remains darkened
+5. Release the mouse button to capture the selection
+6. The screenshot is automatically copied to your clipboard
+7. Press `Escape` to cancel at any time
+
+## Command Line Options
+
+```bash
+snip-tool --help              # Show help message
+snip-tool --version           # Show version information
+snip-tool --setup-shortcut    # Set up keyboard shortcut
+```
+
+## Desktop Environment Support
+
+Keyboard shortcut setup is supported for:
+- **GNOME** (Ubuntu, Fedora, etc.)
+- **Cinnamon** (Linux Mint)
+- **KDE/Plasma** (Kubuntu, openSUSE, etc.)
+- **XFCE** (manual setup instructions provided)
 
 ## Uninstallation
 
-1.  Make the uninstallation script executable:
+### For .deb Package
+```bash
+sudo apt remove snip-tool
+```
 
-    ```bash
-    chmod +x uninstall.sh
-    ```
+### For Script Installation
+1. Make the uninstallation script executable:
+   ```bash
+   chmod +x uninstall.sh
+   ```
 
-2.  Run the uninstallation script with `sudo`:
+2. Run the uninstallation script with `sudo`:
+   ```bash
+   sudo ./uninstall.sh
+   ```
 
-    ```bash
-    sudo ./uninstall.sh
-    ```
+## Building from Source
 
-This will remove the application, the menu entry, and the keyboard shortcut.
+If you want to build the .deb package yourself:
+
+1. **Clone or download the source code**
+2. **Build the package:**
+   ```bash
+   ./build-deb.sh
+   ```
+3. **Install the generated package:**
+   ```bash
+   sudo dpkg -i snip-tool_1.0.0_all.deb
+   ```
+
+## Troubleshooting
+
+### Keyboard Shortcut Not Working
+
+1. Try setting up the shortcut manually:
+   ```bash
+   snip-tool --setup-shortcut
+   ```
+
+2. If automatic setup fails, configure manually in your system settings:
+   - **GNOME/Ubuntu:** Settings → Keyboard → Custom Shortcuts
+   - **KDE/Plasma:** System Settings → Shortcuts → Custom Shortcuts
+   - **XFCE:** Settings → Keyboard → Application Shortcuts
+   - Set shortcut: `Ctrl+Shift+S`
+   - Set command: `snip-tool`
+
+### Dependencies Missing
+
+If you encounter dependency issues:
+```bash
+sudo apt-get update
+sudo apt-get install python3 python3-tk python3-pil python3-pil.imagetk scrot xclip
+```
+
+### Permission Issues
+
+If the tool doesn't launch, check permissions:
+```bash
+sudo chmod +x /usr/local/bin/snip-tool
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
+
+## License
+
+This project is open source. Feel free to use, modify, and distribute as needed.
+
+## Version History
+
+- **v1.0.0** - Initial release with .deb packaging
+  - Professional .deb package distribution
+  - Enhanced keyboard shortcut setup
+  - Custom logo integration
+  - Command line argument support
+  - Multi-desktop environment support
