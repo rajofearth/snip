@@ -16,30 +16,57 @@ A simple and intuitive snipping tool for Linux that allows you to take screensho
 
 ## Installation
 
-### Method 1: .deb Package (Recommended)
+### Method 1: Install from GitHub Release (Recommended)
 
-1. **Download or build the package:**
+1. **Download the latest .deb package** from the [Releases page](https://github.com/rajofearth/snip/releases/latest)
    ```bash
-   # If you have the source code, build the package:
-   ./build-deb.sh
+   # Download the latest release
+   wget https://github.com/rajofearth/snip/releases/latest/download/snip-tool_*.deb
    ```
 
-2. **Install the .deb package:**
+2. **Install the package**:
    ```bash
-   sudo dpkg -i snip-tool_1.0.0_all.deb
+   sudo dpkg -i snip-tool_*.deb
+   sudo apt-get install -f  # Fix any missing dependencies
    ```
 
-3. **Fix any dependency issues (if needed):**
-   ```bash
-   sudo apt-get install -f
-   ```
-
-4. **Set up keyboard shortcut:**
+3. **Set up the keyboard shortcut**:
    ```bash
    snip-tool --setup-shortcut
    ```
 
-### Method 2: Installation Script (Legacy)
+   > 💡 The shortcut will be set to `Ctrl+Shift+S` by default. You can change it in your system settings if needed.
+
+### Method 2: Build from Source
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/rajofearth/snip.git
+   cd snip
+   ```
+
+2. **Install build dependencies**:
+   ```bash
+   sudo apt-get install -y debhelper dh-make build-essential
+   ```
+
+3. **Build the .deb package**:
+   ```bash
+   ./build-deb.sh
+   ```
+
+4. **Install the package** (from the built .deb file):
+   ```bash
+   sudo dpkg -i snip-tool_*.deb
+   sudo apt-get install -f  # Fix any missing dependencies
+   ```
+
+5. **Set up the keyboard shortcut**:
+   ```bash
+   snip-tool --setup-shortcut
+   ```
+
+### Method 3: Installation Script (Legacy)
 
 1. Make the installation script executable:
    ```bash
